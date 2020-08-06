@@ -4,7 +4,7 @@
 
     User manual:
 
-    index: integer selection, notice do not overflow the index number (850 for v1.0-trainval)
+    index: integer selection, notice do not overflow the index number (764 for v1.0-trainval)
 
     Stop: stop any data loading or processing of the visualization node.
     

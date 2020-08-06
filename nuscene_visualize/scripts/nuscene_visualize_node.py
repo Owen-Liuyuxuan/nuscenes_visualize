@@ -44,6 +44,7 @@ class NuscenesVisualizationNode:
         self.set_index(0)
         self.pause = False
         self.stop = True
+        self.publishing = True
         self.timer = rospy.Timer(rospy.Duration(1.0 / self.update_frequency), self.publish_callback)
         
         rospy.Subscriber("/nuscenes/control/index", Int32, self.index_callback)
@@ -177,22 +178,22 @@ class NuscenesVisualizationNode:
         if self.stop: # if stopped, falls back to an empty loop
             return
 
-        is_publish_image = not self.pause # if paused, the original images and lidar are latched (as defined in publishers) and we will not re-publish them to save memory access. But we need to re-publish tf and markers
-
         # Publish cameras and camera info
         channels = ['CAM_BACK',  'CAM_FRONT', 'CAM_FRONT_LEFT', 'CAM_FRONT_RIGHT', 'CAM_BACK_RIGHT', 'CAM_BACK_LEFT']
         for channel in channels:
             data = self.nusc.get('sample_data', self.current_sample['data'][channel])
-            self._camera_publish(data, is_publish_image=is_publish_image)
+            self._camera_publish(data, is_publish_image=self.publishing)
 
         # Publish lidar and ego pose
         data = self.nusc.get('sample_data', self.current_sample['data']['LIDAR_TOP'])
-        self._lidar_publish(data, is_publish_image)
+        self._lidar_publish(data, self.publishing)
 
         # Publish 3D bounding boxes
         _, bboxes, _ = self.nusc.get_sample_data(self.current_sample['data']['LIDAR_TOP'])
         markers = [ros_util.object_to_marker(box, frame_id='LIDAR_TOP', marker_id=i, duration= 1.2 / self.update_frequency) for i, box in enumerate(bboxes)]
         self.publishers['bboxes'].publish(markers)
+
+        self.publishing = not self.pause # if paused, the original images and lidar are latched (as defined in publishers) and we will not re-publish them to save memory access. But we need to re-publish tf and markers
 
         if not self.pause:
             if (self.current_sample['next'] == ''):
