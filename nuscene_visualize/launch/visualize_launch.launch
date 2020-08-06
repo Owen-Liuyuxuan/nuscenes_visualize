@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="NUSCENES_DIR" default="/data/nuscene"/>
+    <arg name="NUSCENES_VER" default="v1.0-trainval"/>
+    <arg name="UPDATE_FREQUENCY" default="4.0"/>
+
+    <node pkg="nuscene_visualize" type="nuscene_visualize_node.py" name="nuscene_visualize_node" output="screen">
+        <param name="NUSCENES_DIR" value="$(arg NUSCENES_DIR)"/>
+        <param name="NUSCENES_VER" value="$(arg NUSCENES_VER)"/>
+        <param name="UPDATE_FREQUENCY" value="$(arg UPDATE_FREQUENCY)"/>
+    </node>
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find nuscene_visualize)/rviz/rviz.rviz"/>
+    <node pkg="nuscene_visualize" type="pose2tf.py" name="pose2tfnode" output="screen" respawn="false" respawn_delay="0">
+    </node>
+    <node pkg="nuscene_visualize" type="gui_controller_node.py" name="gui_controller_node" output="screen" respawn="false" respawn_delay="0">
+
+    </node>
+</launch>
