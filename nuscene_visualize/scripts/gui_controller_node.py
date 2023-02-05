@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
     This script launchs a control panel for GUI interaction with Nuscenes visualization.
 
