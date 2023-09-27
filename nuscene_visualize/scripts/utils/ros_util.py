@@ -141,6 +141,7 @@ def object_to_marker(box, frame_id="base", marker_id=None, duration=0.15, color=
         marker.id = marker_id
     marker.type = 5 
     marker.scale.x = 0.05
+    marker.pose.orientation.w = 1.0
 
     detection_name = general_to_detection[box.name]
     if color is None:
